@@ -45,6 +45,27 @@ class ApplicationService < Performify::Base
 end
 ```
 
+This is, for example, how authorization can be implemented for `Pundit`:
+
+```ruby
+class ApplicationService < Performify::Base
+  def authorize!(record, query = default_query, record_policy = nil)
+    record_policy ||= policy(record)
+    return if record_policy.public_send(query)
+
+    raise Pundit::NotAuthorizedError, query: query, record: record, policy: record_policy
+  end
+
+  def default_query
+    @default_query ||= "#{self.class.name.demodulize.underscore.to_sym}?"
+  end
+
+  def policy(record)
+    @policy ||= Pundit.policy!(@current_user, record)
+  end
+end
+```
+
 ### Service: database
 
 Now, to define new service just create new class and inherit it from `ApplicationService`:

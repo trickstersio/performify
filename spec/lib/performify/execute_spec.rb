@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Performify::Base do
   after { described_class.clean_callbacks }
-  
+
   let(:user) { double(:user) }
   let(:args) do
     {

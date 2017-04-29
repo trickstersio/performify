@@ -2,7 +2,7 @@ module Performify
   module Callbacks
     class UnknownTypeOfCallbackError < StandardError; end
 
-    TYPES_OF_CALLBACK = [ :success, :fail ].freeze
+    TYPES_OF_CALLBACK = %i[success fail].freeze
 
     def clean_callbacks
       @service_callbacks = {}

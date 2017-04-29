@@ -100,7 +100,7 @@ module Users
 
     def force?
       # additional instance variables can be passed as named args into
-      # initializer and accessed by in service flow
+      # initializer and accessed in service flow
 
       force.present?
     end

@@ -184,7 +184,7 @@ To install this gem onto your local machine, run `bin/rake install`. To release 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/performify.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kimrgrey/performify.
 
 
 ## License

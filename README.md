@@ -176,6 +176,71 @@ module Passwords
 end
 ```
 
+### Validation
+
+Performify allows you to validate input arguments using [dry-validation](http://dry-rb.org/gems/dry-validation/) schemas. Validation is performed on creation of service instance. And if validation is not passed it will be impossible to call execution. Result of execution will be automatically switched to failed state.
+
+```ruby
+module Users
+  module Create
+    schema do
+      required(:email).filled(:str?)
+    end
+
+    def execute!
+      # it will be impossible to call execution if provided arguments
+      # did not pass validation
+    end
+  end
+end
+
+service = Users::Create.new(current_user, email: nil)
+service.execute! # nothing happens here
+service.success? # will be false because of validation
+service.errors   # contains hash of errors
+```
+
+Sometimes you can have differences between validation errors and execution errors. But usually it's boring to check them separately since you just need to display final result to user. To avoid double check you can use following trick:
+
+```ruby
+module Users
+  module Create
+    attr_reader :user
+
+    schema do
+      required(:email).filled(:str?)
+    end
+
+    def execute!
+      user = User.new(email: email)
+      authorize! user
+
+      # Let's assume that user has additional validation of uniqueness on the
+      # level of model, so in controller you need to check separately service's
+      # errors and model's errors, right?
+
+      super { user.save }
+    end
+
+    # So, we define on fail callback where we copy errors from model
+    # to service so now in controller we can check and use only service's errors
+
+    on_fail { errors! user.errors(u.errors.to_h) }
+  end
+end
+
+# in controller
+
+service = Users::Create.new(current_user, email: nil)
+service.execute!
+
+if service.success?
+  # respond with ok
+else
+  # respond with unprocessable entity and service.errors
+end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

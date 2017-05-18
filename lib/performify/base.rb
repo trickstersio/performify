@@ -1,20 +1,28 @@
 require 'performify/callbacks'
+require 'performify/validation'
 
 module Performify
   class Base
     extend Performify::Callbacks
+    extend Performify::Validation
 
     attr_reader :current_user
 
     def initialize(current_user = nil, **args)
       @current_user = current_user
 
-      args.each do |arg_name, arg_value|
+      return if args.empty?
+
+      validate(args).each do |arg_name, arg_value|
         define_singleton_method(arg_name) { arg_value }
       end
+
+      fail!(with_callbacks: true) if errors?
     end
 
     def execute!
+      return if defined?(@result)
+
       block_result = nil
 
       ActiveRecord::Base.transaction do

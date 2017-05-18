@@ -48,6 +48,21 @@ RSpec.describe Performify::Base do
         subject.execute! { false }
       end.to yield_control
     end
+
+    context 'when execution has been already performed' do
+      it 'performes execution only once' do
+        expect do |b|
+          subject.execute!(&b)
+        end.to yield_control.exactly(1).times
+      end
+    end
+
+    context 'when execution result is already known' do
+      it 'does not perform execution' do
+        subject.fail!(with_callbacks: false)
+        expect { |b| subject.execute!(&b) }.to yield_control.exactly(0).times
+      end
+    end
   end
 
   describe '#success!' do

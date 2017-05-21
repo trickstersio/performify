@@ -225,7 +225,7 @@ module Users
     # So, we define on fail callback where we copy errors from model
     # to service so now in controller we can check and use only service's errors
 
-    on_fail { errors! user.errors(u.errors.to_h) }
+    on_fail { errors! user.errors.to_h }
   end
 end
 

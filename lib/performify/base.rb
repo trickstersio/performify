@@ -11,6 +11,11 @@ module Performify
     def initialize(current_user = nil, **args)
       @current_user = current_user
 
+      define_singleton_method(:execute!) do |&block|
+        return if defined?(@result)
+        super(&block)
+      end
+
       return if args.empty?
 
       validate(args).each do |arg_name, arg_value|

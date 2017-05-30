@@ -53,6 +53,25 @@ RSpec.describe Performify::Base do
         subject.execute!
         expect(subject.success?).to be false
       end
+
+      context 'and when execution does not use super' do
+        let(:klass) do
+          Class.new(described_class) do
+            schema do
+              required(:foo).filled(:str?)
+            end
+
+            def execute!
+              success!
+            end
+          end
+        end
+
+        it 'ignores all attempts of service execution' do
+          subject.execute!
+          expect(subject.success?).to be false
+        end
+      end
     end
   end
 end

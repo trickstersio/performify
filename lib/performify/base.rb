@@ -58,8 +58,9 @@ module Performify
       @result
     end
 
-    def fail!(with_callbacks: true)
+    def fail!(with_callbacks: true, errors: nil)
       @result = false
+      errors!(errors) unless errors.nil?
       execute_callbacks if with_callbacks
       @result
     end

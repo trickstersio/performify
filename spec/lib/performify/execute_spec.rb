@@ -95,6 +95,12 @@ RSpec.describe Performify::Base do
         subject.fail!
       end.not_to yield_control
     end
+
+    it 'stores provided errors' do
+      errors = { foo: 'bar' }
+      subject.fail!(errors: errors)
+      expect(subject.errors).to eq(errors)
+    end
   end
 
   describe '#success?' do

@@ -26,8 +26,6 @@ module Performify
     end
 
     def execute!
-      return if defined?(@result)
-
       block_result = nil
 
       ActiveRecord::Base.transaction do

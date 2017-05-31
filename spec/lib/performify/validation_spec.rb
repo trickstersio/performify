@@ -24,6 +24,39 @@ RSpec.describe Performify::Base do
 
   after { klass.clean_callbacks }
 
+  describe '#errors!' do
+    it 'creates errors hash' do
+      error = { user_id: 'is invalid' }
+      subject.errors!(error)
+      expect(subject.errors).to eq(error)
+    end
+
+    it 'merges new errors to existing hash' do
+      error_1 = { user_id: 'is invalid' }
+      error_2 = { password: 'is too easy' }
+
+      subject.errors!(error_1)
+      subject.errors!(error_2)
+
+      expect(subject.errors).to eq(error_1.merge(error_2))
+    end
+
+    it 'converts argument to hash' do
+      error = [ [:user_id, 'is invalid'] ]
+      subject.errors!(error)
+      expect(subject.errors).to eq(user_id: 'is invalid')
+    end
+
+    it 'raises ArgumentError if argument is nil' do
+      expect { subject.errors!(nil) }.to raise_error(ArgumentError)
+    end
+
+    it 'raises ArgumentError if argument is not a hash' do
+      error = 'Very bad situation'
+      expect { subject.errors!(error) }.to raise_error(ArgumentError)
+    end
+  end
+
   describe '#initialize' do
     it 'validates given args using defined schema without errors' do
       expect(subject.errors).to be_empty

@@ -27,7 +27,8 @@ module Performify
       end
 
       def errors!(new_errors)
-        errors.merge!(new_errors)
+        raise ArgumentError, 'Errors should be a hash' if new_errors.nil? || !new_errors.respond_to?(:to_h)
+        errors.merge!(new_errors.to_h)
       end
 
       def errors

@@ -32,6 +32,7 @@ How to have a deal with services:
 4. Use `super` to work with db transaction and automatic success / fail workflow control
 5. Use `success!` and `fail!` to control everything by hands
 6. Use `on_success` / `on_fail` to define callbacks
+7. Use `schema do ... end` if you want to use validations
 
 ### ApplicationService
 
@@ -182,7 +183,7 @@ Performify allows you to validate input arguments using [dry-validation](http://
 
 ```ruby
 module Users
-  module Create
+  class Create
     schema do
       required(:email).filled(:str?)
     end
@@ -204,7 +205,7 @@ Sometimes you can have differences between validation errors and execution error
 
 ```ruby
 module Users
-  module Create
+  class Create
     attr_reader :user
 
     schema do
@@ -239,6 +240,43 @@ if service.success?
 else
   # respond with unprocessable entity and service.errors
 end
+```
+
+## Initialization
+
+Performify will dynamically define accessors for all arguments passed to service in addition to current_user:
+
+```ruby
+module Users
+  class Create
+    def execute!
+      # it will define accessors for all arguments:
+      User.new(email: email, role: role, manager: current_user)
+    end
+  end
+end
+
+service = Users::Create.new(current_user, email: 'mail@google.com', role: 'employee')
+```
+
+But if you use `schema` to validate parameters Performify will define accessors only for additional arguments mentioned in schema:
+
+```ruby
+module Users
+  class Create
+    schema do
+      required(:email).filled(:str?)
+      optional(:phone).filled(:str?)
+    end
+
+    def execute!
+      # it will define accessors for `email` and `phone`, but won't define `role`
+      User.new(email: email, phone: phone, manager: current_user) # phone is nil
+    end
+  end
+end
+
+service = Users::Create.new(current_user, email: 'mail@google.com', role: 'manager')
 ```
 
 ## Development

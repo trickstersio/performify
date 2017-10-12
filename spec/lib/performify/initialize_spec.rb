@@ -20,5 +20,44 @@ RSpec.describe Performify::Base do
     it 'accept additional args and creates getters for it' do
       expect(subject.foo).to eq(args[:foo])
     end
+
+    context 'with defined schema' do
+      subject { klass.new(user, **args) }
+      after { klass.clean_callbacks }
+
+      let(:klass) do
+        Class.new(described_class) do
+          schema do
+            required(:foo).filled(:str?)
+            optional(:baz).filled(:str?)
+          end
+
+          def execute!
+            super { true }
+          end
+        end
+      end
+
+      it 'creates getters for required params' do
+        expect(subject.foo).to eq 'bar'
+      end
+
+      it 'creates getters for optional params' do
+        expect(subject.baz).to be_nil
+      end
+
+      context 'with params that are not in schema' do
+        let(:args) do
+          {
+            foo: 'bar',
+            qux: 'quux'
+          }
+        end
+
+        it 'does not create getters' do
+          expect { subject.qux }.to raise_error(NoMethodError)
+        end
+      end
+    end
   end
 end

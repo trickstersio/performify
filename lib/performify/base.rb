@@ -18,9 +18,8 @@ module Performify
 
       return if args.empty?
 
-      validate(args).each do |arg_name, arg_value|
-        define_singleton_method(arg_name) { arg_value }
-      end
+      validate(args)
+      define_singleton_methods(args)
 
       fail!(with_callbacks: true) if errors?
     end
@@ -74,6 +73,13 @@ module Performify
 
     def fail?
       @result.blank?
+    end
+
+    private def define_singleton_methods(args)
+      param_names = schema ? schema.rules.keys : args.keys
+      param_names.each do |param_name|
+        define_singleton_method(param_name) { args[param_name] }
+      end
     end
   end
 end

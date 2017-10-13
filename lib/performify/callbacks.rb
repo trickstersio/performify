@@ -24,7 +24,7 @@ module Performify
         raise UnknownTypeOfCallbackError, "Type #{type_of_callback} is not allowed"
       end
       cbs = (@service_callbacks || {}).fetch(type_of_callback, [])
-      cbs.each { |cb| instance.instance_eval(&cb) }
+      cbs.each { |cb| cb.is_a?(Proc) ? instance.instance_eval(&cb) : instance.send(cb) }
       nil
     end
 

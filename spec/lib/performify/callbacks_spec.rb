@@ -50,7 +50,7 @@ RSpec.describe Performify::Base do
       end.to yield_with_args(subject)
     end
 
-    it 'executes callback method' do
+    it 'executes public callback method' do
       klass = Class.new(described_class) do
         def execute!
           super { true }
@@ -63,6 +63,43 @@ RSpec.describe Performify::Base do
 
       instance = klass.new(user)
       expect(instance).to receive(:foo)
+      instance.execute!
+    end
+
+    it 'executes private callback method' do
+      klass = Class.new(described_class) do
+        def execute!
+          super { true }
+        end
+
+        on_success :bar
+
+        private def bar; end
+      end
+
+      instance = klass.new(user)
+      expect(instance).to receive(:bar)
+      instance.execute!
+    end
+
+    it 'executes callback block' do
+      klass = Class.new(described_class) do
+        def execute!
+          super { true }
+        end
+
+        on_success do
+          foo
+          bar
+        end
+
+        def foo; end
+        private def bar; end
+      end
+
+      instance = klass.new(user)
+      expect(instance).to receive(:foo)
+      expect(instance).to receive(:bar)
       instance.execute!
     end
   end

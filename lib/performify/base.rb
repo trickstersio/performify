@@ -7,17 +7,13 @@ module Performify
     extend Performify::Validation
 
     attr_reader :current_user
+    attr_reader :args
 
     def initialize(current_user = nil, **args)
       @current_user = current_user
+      @args = args
 
-      define_singleton_method(:execute!) do |&block|
-        return if defined?(@result)
-        super(&block)
-      end
-
-      validate(args)
-      define_singleton_methods(args)
+      prepare_instance
 
       fail!(with_callbacks: true) if errors?
     end
@@ -73,7 +69,17 @@ module Performify
       @result.blank?
     end
 
-    private def define_singleton_methods(args)
+    private def prepare_instance
+      define_singleton_method(:execute!) do |&block|
+        return if defined?(@result)
+        super(&block)
+      end
+
+      validate
+      define_singleton_methods
+    end
+
+    private def define_singleton_methods
       param_names = schema ? schema.rules.keys : args.keys
       param_names.each do |param_name|
         define_singleton_method(param_name) { args[param_name] }

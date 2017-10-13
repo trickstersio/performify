@@ -19,7 +19,7 @@ module Performify
         self.class.schema
       end
 
-      def validate(args)
+      def validate
         return args if schema.nil?
         result = schema.call(args)
         errors!(result.errors) unless result.success?

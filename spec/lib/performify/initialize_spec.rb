@@ -17,6 +17,10 @@ RSpec.describe Performify::Base do
       expect(subject.current_user).to eq(user)
     end
 
+    it 'accepts args' do
+      expect(subject.args).to eq(args)
+    end
+
     it 'accept additional args and creates getters for it' do
       expect(subject.foo).to eq(args[:foo])
     end

@@ -106,5 +106,39 @@ RSpec.describe Performify::Base do
         end
       end
     end
+
+    context 'with outer schema' do
+      let(:klass) do
+        outer_schema = Dry::Validation.Schema do
+          required(:foo).filled(:str?)
+        end
+
+        Class.new(described_class) do
+          schema outer_schema
+
+          def execute!
+            super { true }
+          end
+        end
+      end
+
+      it 'executes successfully when args are valid' do
+        subject.execute!
+        expect(subject.success?).to be true
+      end
+
+      context 'when args are invalid' do
+        let(:args) do
+          {
+            foo: nil
+          }
+        end
+
+        it 'executes fails' do
+          subject.execute!
+          expect(subject.success?).to be false
+        end
+      end
+    end
   end
 end

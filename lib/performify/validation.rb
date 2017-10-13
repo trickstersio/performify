@@ -8,9 +8,14 @@ module Performify
     end
 
     module ClassMethods
-      def schema(&block)
-        return @schema unless block_given?
-        @schema = Dry::Validation.Schema(Dry::Validation::Schema::Form, {}, &block)
+      def schema(outer_schema = nil, &block)
+        if block_given?
+          @schema = Dry::Validation.Schema(Dry::Validation::Schema::Form, {}, &block)
+        elsif outer_schema.present? && outer_schema.is_a?(Dry::Validation::Schema)
+          @schema = outer_schema
+        else
+          @schema
+        end
       end
     end
 

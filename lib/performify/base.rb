@@ -16,8 +16,6 @@ module Performify
         super(&block)
       end
 
-      return if args.empty?
-
       validate(args)
       define_singleton_methods(args)
 

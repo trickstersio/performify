@@ -46,6 +46,20 @@ RSpec.describe Performify::Base do
         expect(subject.baz).to be_nil
       end
 
+      context 'when no params provided' do
+        let(:args) do
+          {}
+        end
+
+        it 'defines getters anyway' do
+          expect(subject.foo).to be nil
+        end
+
+        it 'fails' do
+          expect(subject.errors?).to be true
+        end
+      end
+
       context 'with params that are not in schema' do
         let(:args) do
           {
@@ -54,7 +68,7 @@ RSpec.describe Performify::Base do
           }
         end
 
-        it 'does not create getters' do
+        it 'does not create getters for not defined params' do
           expect { subject.qux }.to raise_error(NoMethodError)
         end
       end

@@ -2,7 +2,7 @@ AllCops:
   Exclude:
     - 'bin/*'
     - 'spec/**/*_spec.rb'
-
+    - '*.gemspec'
 Rails:
   Enabled: false
 

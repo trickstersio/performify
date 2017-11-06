@@ -10,7 +10,7 @@ RSpec.describe Performify::Base do
     }
   end
 
-  subject { described_class.new(user, **args) }
+  subject { described_class.new(user, args) }
 
   describe '#initialize' do
     it 'accepts current user' do
@@ -25,8 +25,16 @@ RSpec.describe Performify::Base do
       expect(subject.foo).to eq(args[:foo])
     end
 
+    context 'when we pass args as keyword arguments' do
+      subject { described_class.new(user, **args) }
+
+      it 'still works fine' do
+        expect(subject.foo).to eq(args[:foo])
+      end
+    end
+
     context 'with defined schema' do
-      subject { klass.new(user, **args) }
+      subject { klass.new(user, args) }
       after { klass.clean_callbacks }
 
       let(:klass) do

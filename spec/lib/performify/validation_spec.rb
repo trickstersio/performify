@@ -20,7 +20,7 @@ RSpec.describe Performify::Base do
     end
   end
 
-  subject { klass.new(user, **args) }
+  subject { klass.new(user, args) }
 
   after { klass.clean_callbacks }
 

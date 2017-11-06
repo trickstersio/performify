@@ -10,7 +10,7 @@ RSpec.describe Performify::Base do
     }
   end
 
-  subject { described_class.new(user, **args) }
+  subject { described_class.new(user, args) }
 
   describe '.register_callback' do
     it 'raises UnknownTypeOfCallbackError in case of unknown type of callbacks' do

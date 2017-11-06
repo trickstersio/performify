@@ -10,7 +10,7 @@ RSpec.describe Performify::Base do
     }
   end
 
-  subject { described_class.new(user, **args) }
+  subject { described_class.new(user, args) }
 
   describe '#execute!' do
     it 'calls given block' do

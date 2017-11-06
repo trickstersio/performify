@@ -9,7 +9,7 @@ module Performify
     attr_reader :current_user
     attr_reader :args
 
-    def initialize(current_user = nil, **args)
+    def initialize(current_user = nil, args = {})
       @current_user = current_user
       @args = args
 

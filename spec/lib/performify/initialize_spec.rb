@@ -10,7 +10,7 @@ RSpec.describe Performify::Base do
     }
   end
 
-  subject { described_class.new(user, **args) }
+  subject { described_class.new(user, args) }
 
   describe '#initialize' do
     it 'accepts current user' do
@@ -26,7 +26,7 @@ RSpec.describe Performify::Base do
     end
 
     context 'with defined schema' do
-      subject { klass.new(user, **args) }
+      subject { klass.new(user, args) }
       after { klass.clean_callbacks }
 
       let(:klass) do

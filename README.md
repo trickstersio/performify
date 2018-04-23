@@ -242,6 +242,28 @@ else
 end
 ```
 
+You can get filtered inputs after success validation by accessing `inputs`.
+
+```ruby
+module Users
+  class UpdateProfile < ApplicationService
+    schema do
+      optional(:first_name).filled(:str?)
+      optional(:last_name).filled(:str?)
+      optional(:login).filled(:str?)
+      optional(:image)
+      optional(:email).filled(format?: /\A[^ \n\r\s]+@[^ \n\r\s]+\z/i)
+    end
+
+    def execute!
+      super { current_user.update(inputs) }
+    end
+
+    on_fail { errors!(current_user.errors) }
+  end
+end
+```
+
 ## Initialization
 
 Performify will dynamically define accessors for all arguments passed to service in addition to current_user:

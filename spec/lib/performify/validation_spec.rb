@@ -74,6 +74,11 @@ RSpec.describe Performify::Base do
       expect(subject.success?).to be true
     end
 
+    it 'has filtered inputs' do
+      subject.execute!
+      expect(subject.inputs).to eq(args)
+    end
+
     context 'when args are invalid' do
       let(:args) do
         {
@@ -92,6 +97,11 @@ RSpec.describe Performify::Base do
       it 'ignores all attempts of service execution' do
         subject.execute!
         expect(subject.success?).to be false
+      end
+
+      it 'no filtered inputs' do
+        subject.execute!
+        expect(subject.inputs).to be_nil
       end
 
       context 'and when execution does not use super' do
@@ -134,6 +144,11 @@ RSpec.describe Performify::Base do
         expect(subject.success?).to be true
       end
 
+      it 'has filtered inputs' do
+        subject.execute!
+        expect(subject.inputs).to eq(args)
+      end
+
       context 'when args are invalid' do
         let(:args) do
           {
@@ -144,6 +159,11 @@ RSpec.describe Performify::Base do
         it 'executes fails' do
           subject.execute!
           expect(subject.success?).to be false
+        end
+
+        it 'no filtered inputs' do
+          subject.execute!
+          expect(subject.inputs).to be_nil
         end
       end
     end

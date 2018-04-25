@@ -9,6 +9,7 @@ module Performify
     attr_reader :current_user
     attr_reader :args
     attr_reader :inputs
+    attr_reader :exception
 
     def initialize(current_user = nil, args = {})
       @current_user = current_user
@@ -30,8 +31,8 @@ module Performify
           else
             fail!(with_callbacks: false)
           end
-        rescue RuntimeError, ActiveRecord::RecordInvalid
-          fail!
+        rescue RuntimeError, ActiveRecord::RecordInvalid => e
+          fail!(exception: e)
         end
 
         raise ActiveRecord::Rollback if fail?
@@ -55,10 +56,11 @@ module Performify
       @result
     end
 
-    def fail!(with_callbacks: true, errors: nil)
+    def fail!(with_callbacks: true, errors: nil, exception: nil)
       @result = false
       errors!(errors) unless errors.nil?
       execute_callbacks if with_callbacks
+      @exception = exception unless exception.nil?
       @result
     end
 

@@ -25,11 +25,19 @@ RSpec.describe Performify::Base do
       expect(subject.foo).to eq(args[:foo])
     end
 
+    it 'no filtered inputs' do
+      expect(subject.inputs).to be_nil
+    end
+
     context 'when we pass args as keyword arguments' do
       subject { described_class.new(user, **args) }
 
       it 'still works fine' do
         expect(subject.foo).to eq(args[:foo])
+      end
+
+      it 'no filtered inputs' do
+        expect(subject.inputs).to be_nil
       end
     end
 
@@ -58,6 +66,10 @@ RSpec.describe Performify::Base do
         expect(subject.baz).to be_nil
       end
 
+      it 'has filtered inputs' do
+        expect(subject.inputs).to eq(args)
+      end
+
       context 'when no params provided' do
         let(:args) do
           {}
@@ -69,6 +81,10 @@ RSpec.describe Performify::Base do
 
         it 'fails' do
           expect(subject.errors?).to be true
+        end
+
+        it 'no filtered inputs' do
+          expect(subject.inputs).to be_nil
         end
       end
 
@@ -82,6 +98,10 @@ RSpec.describe Performify::Base do
 
         it 'does not create getters for not defined params' do
           expect { subject.qux }.to raise_error(NoMethodError)
+        end
+
+        it 'has only valid filtered inputs' do
+          expect(subject.inputs).to eq({ foo: 'bar' })
         end
       end
     end

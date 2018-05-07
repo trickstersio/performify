@@ -41,6 +41,13 @@ RSpec.describe Performify::Base do
       expect(subject.errors).to eq(error_1.merge(error_2))
     end
 
+    it 'deep merge new errors to existing hash' do
+      messages = ['less than 6 characters', 'is too easy', ['is too easy']]
+      messages.each { |message| subject.errors!({ password: message }) }
+
+      expect(subject.errors).to eq({ password: messages.flatten(1) })
+    end
+
     it 'converts argument to hash' do
       error = [ [:user_id, 'is invalid'] ]
       subject.errors!(error)

@@ -230,8 +230,6 @@ module Users
   end
 end
 
-You can set options for `#with` to schema by overriding `#with_options`
-
 # in controller
 
 service = Users::Create.new(current_user, email: nil)
@@ -241,6 +239,32 @@ if service.success?
   # respond with ok
 else
   # respond with unprocessable entity and service.errors
+end
+```
+
+You can set options for `#with` to schema by overriding `#with_options`.
+By default `#with_options` contains `{ current_user: current_user }`.
+
+```ruby
+module Users
+  class UpdatePassword < ApplicationService
+    schema do
+      configure do
+        option :current_user
+
+        def valid_password?(value)
+          current_user.password_digest.blank? || current_user.authenticate(value)
+        end
+      end
+
+      optional(:old_password).filled(:str?, :valid_password?)
+      required(:new_password).filled(:str?)
+    end
+
+    def execute!
+      super { current_user.update(password: new_password) }
+    end
+  end
 end
 ```
 

@@ -230,6 +230,8 @@ module Users
   end
 end
 
+You can set options for `#with` to schema by overriding `#with_options`
+
 # in controller
 
 service = Users::Create.new(current_user, email: nil)

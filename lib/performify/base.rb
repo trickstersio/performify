@@ -70,7 +70,9 @@ module Performify
       @result.blank?
     end
 
-    private def prepare_instance
+    private
+
+    def prepare_instance
       define_singleton_method(:execute!) do |&block|
         return if defined?(@result)
         super(&block)
@@ -80,7 +82,7 @@ module Performify
       define_singleton_methods
     end
 
-    private def define_singleton_methods
+    def define_singleton_methods
       param_names = schema ? schema.rules.keys : args.keys
       param_names.each do |param_name|
         define_singleton_method(param_name) { args[param_name] }

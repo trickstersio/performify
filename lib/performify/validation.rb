@@ -50,9 +50,7 @@ module Performify
         errors.any?
       end
 
-      private
-
-      def with_options
+      private def with_options
         { current_user: current_user }
       end
     end

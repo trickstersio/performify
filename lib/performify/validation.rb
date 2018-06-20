@@ -10,7 +10,7 @@ module Performify
     module ClassMethods
       def schema(outer_schema = nil, &block)
         if block_given?
-          @schema = Dry::Validation.Schema(Dry::Validation::Schema::Form, {}, &block)
+          @schema = Dry::Validation.Schema(Dry::Validation::Schema::Params, {}, &block)
         elsif outer_schema.present? && outer_schema.is_a?(Dry::Validation::Schema)
           @schema = outer_schema
         else
@@ -37,7 +37,9 @@ module Performify
 
       def errors!(new_errors)
         raise ArgumentError, 'Errors should be a hash' if new_errors.nil? || !new_errors.respond_to?(:to_h)
-        errors.merge!(new_errors.to_h)
+        new_errors.to_h.each do |key, value|
+          errors[key] = errors.key?(key) ? [errors[key]].flatten(1) + [value].flatten(1) : value
+        end
       end
 
       def errors

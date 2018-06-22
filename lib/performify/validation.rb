@@ -26,7 +26,7 @@ module Performify
 
       def validate
         return args if schema.nil?
-        result = schema.call(args)
+        result = schema.with(with_options).call(args)
         if result.success?
           @inputs = result.output
         else
@@ -48,6 +48,10 @@ module Performify
 
       def errors?
         errors.any?
+      end
+
+      private def with_options
+        { current_user: current_user }
       end
     end
   end

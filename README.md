@@ -242,6 +242,32 @@ else
 end
 ```
 
+You can set options for `#with` to schema by overriding `#with_options`.
+By default `#with_options` contains `{ current_user: current_user }`.
+
+```ruby
+module Users
+  class UpdatePassword < ApplicationService
+    schema do
+      configure do
+        option :current_user
+
+        def valid_password?(value)
+          current_user.password_digest.blank? || current_user.authenticate(value)
+        end
+      end
+
+      optional(:old_password).filled(:str?, :valid_password?)
+      required(:new_password).filled(:str?)
+    end
+
+    def execute!
+      super { current_user.update(password: new_password) }
+    end
+  end
+end
+```
+
 You can get filtered inputs after success validation by accessing `inputs`.
 
 ```ruby

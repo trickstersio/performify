@@ -24,6 +24,10 @@ Metrics/LineLength:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/AccessModifierDeclarations:
+  Enabled: true
+  EnforcedStyle: inline
+
 Rails/Validation:
   Enabled: false
 

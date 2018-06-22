@@ -105,5 +105,35 @@ RSpec.describe Performify::Base do
         end
       end
     end
+
+    context 'support of nested attributes via dot notation' do
+      let(:args) do 
+        { admin: { record: { email: 'test@test.com' } } }
+      end
+
+      subject { klass.new(user, args) }
+      after { klass.clean_callbacks }
+
+      let(:klass) do
+        Class.new(described_class) do
+          schema do
+            required(:admin).schema do
+              required(:record).schema do
+                required(:email).filled(:str?)
+              end
+            end
+          end
+
+
+          def execute!
+            super { true }
+          end
+        end
+      end
+
+      it 'should be accessible via dot' do
+        expect(subject.admin.record.email).to eq(args[:admin][:record][:email])
+      end
+    end
   end
 end

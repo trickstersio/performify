@@ -85,7 +85,10 @@ module Performify
     private def define_singleton_methods
       param_names = schema ? schema.rules.keys : args.keys
       param_names.each do |param_name|
-        define_singleton_method(param_name) { args[param_name] }
+        define_singleton_method(param_name) do
+          value = args[param_name]
+          value.is_a?(Hash) ? JSON.parse(value.to_json, object_class: OpenStruct) : value
+        end
       end
     end
   end

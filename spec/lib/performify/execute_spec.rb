@@ -49,6 +49,15 @@ RSpec.describe Performify::Base do
       end.to yield_control
     end
 
+    context 'when execution raises ActiveRecord::RecordInvalid' do
+      it 'calls registered fail callback only once' do
+        expect do |b|
+          described_class.register_callback(:fail, &b)
+          subject.execute! { raise ActiveRecord::RecordInvalid }
+        end.to yield_control.once
+      end
+    end
+
     context 'when execution has been already performed' do
       it 'performes execution only once' do
         expect do |b|

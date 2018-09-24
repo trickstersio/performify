@@ -26,6 +26,7 @@ module Performify
 
       def validate
         return args if schema.nil?
+
         result = schema.with(with_options).call(args)
         if result.success?
           @inputs = result.output
@@ -37,6 +38,7 @@ module Performify
 
       def errors!(new_errors)
         raise ArgumentError, 'Errors should be a hash' if new_errors.nil? || !new_errors.respond_to?(:to_h)
+
         new_errors.to_h.each do |key, value|
           errors[key] = errors.key?(key) ? [errors[key]].flatten(1) + [value].flatten(1) : value
         end

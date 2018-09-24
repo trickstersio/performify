@@ -75,6 +75,7 @@ module Performify
     private def prepare_instance
       define_singleton_method(:execute!) do |&block|
         return if defined?(@result)
+
         super(&block)
       end
 

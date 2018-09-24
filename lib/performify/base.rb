@@ -32,7 +32,7 @@ module Performify
             fail!(with_callbacks: false)
           end
         rescue RuntimeError, ActiveRecord::RecordInvalid => e
-          fail!(exception: e)
+          fail!(exception: e, with_callbacks: false)
         end
 
         raise ActiveRecord::Rollback if fail?

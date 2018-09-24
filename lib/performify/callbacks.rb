@@ -12,6 +12,7 @@ module Performify
       unless TYPES_OF_CALLBACK.include?(type_of_callback)
         raise UnknownTypeOfCallbackError, "Type #{type_of_callback} is not allowed"
       end
+
       @service_callbacks ||= {}
       @service_callbacks[type_of_callback] ||= []
       @service_callbacks[type_of_callback] << method_name if method_name
@@ -23,6 +24,7 @@ module Performify
       unless TYPES_OF_CALLBACK.include?(type_of_callback)
         raise UnknownTypeOfCallbackError, "Type #{type_of_callback} is not allowed"
       end
+
       cbs = (@service_callbacks || {}).fetch(type_of_callback, [])
       cbs.each { |cb| cb.is_a?(Proc) ? instance.instance_eval(&cb) : instance.send(cb) }
       nil

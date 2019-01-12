@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    parallelism: 1
+    docker:
+      image: ruby:2.3-alpine
+    steps:
+      - checkout
+
+      - run:
+        name: install bunlder
+        command: gem install bundler
+
+      - restore_cache:
+        keys:
+          - performify-bundle-{{ checksum "Gemfile.lock" }}
+          - performify-bundle-
+
+      - run:
+        name: bundle Install
+        command: bundle check || bundle install
+
+      - run:
+        name: rspec
+        command: |
+          bundle exec rspec --profile 10 \
+                            --format RspecJunitFormatter \
+                            --out test_results/rspec.xml \
+                            --format progress \
+                            $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+
+      - store_test_results:
+        path: test_results

@@ -11,7 +11,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - performify-dependencies-{{ checksum "Gemfile.lock" }}
+          - performify-dependencies-{{ checksum "performify.gemspec" }}
           - performify-dependencies-
 
       - run:
@@ -22,7 +22,7 @@ jobs:
       - save_cache:
           paths:
             - ./vendor/bundle
-          key: performify-dependencies-{{ checksum "Gemfile.lock" }}
+          key: performify-dependencies-{{ checksum "performify.gemspec" }}
 
       - run:
           name: run tests

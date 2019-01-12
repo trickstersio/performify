@@ -1,33 +1,43 @@
 version: 2
 jobs:
   build:
-    parallelism: 1
     docker:
-      image: ruby:2.3-alpine
+      - image: circleci/ruby:2.4.1-node-browsers
+
+    working_directory: ~/repo
+
     steps:
       - checkout
 
-      - run:
-        name: install bunlder
-        command: gem install bundler
-
       - restore_cache:
-        keys:
-          - performify-bundle-{{ checksum "Gemfile.lock" }}
-          - performify-bundle-
+          keys:
+          - performify-dependencies-{{ checksum "Gemfile.lock" }}
+          - performify-dependencies-
 
       - run:
-        name: bundle Install
-        command: bundle check || bundle install
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: performify-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
-        name: rspec
-        command: |
-          bundle exec rspec --profile 10 \
+          name: run tests
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
-                            --out test_results/rspec.xml \
+                            --out /tmp/test-results/rspec.xml \
                             --format progress \
-                            $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+                            $TEST_FILES
 
       - store_test_results:
-        path: test_results
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results

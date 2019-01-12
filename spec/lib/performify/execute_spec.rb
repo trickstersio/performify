@@ -49,6 +49,17 @@ RSpec.describe Performify::Base do
       end.to yield_control
     end
 
+    context "when result has been specified by block" do
+      it "does not replace it by result specified based on block return value" do
+        subject.execute! do
+          subject.success!
+          false
+        end
+
+        expect(subject.success?).to be true
+      end
+    end
+
     context 'when execution raises ActiveRecord::RecordInvalid' do
       it 'calls registered fail callback only once' do
         expect do |b|

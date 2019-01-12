@@ -26,10 +26,13 @@ module Performify
       ActiveRecord::Base.transaction do
         begin
           block_result = yield
-          if block_result
-            success!(with_callbacks: false)
-          else
-            fail!(with_callbacks: false)
+
+          if @result.nil?
+            if block_result
+              success!(with_callbacks: false)
+            else
+              fail!(with_callbacks: false)
+            end
           end
         rescue RuntimeError, ActiveRecord::RecordInvalid => e
           fail!(exception: e, with_callbacks: false)

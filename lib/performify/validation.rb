@@ -1,5 +1,3 @@
-require 'dry-validation'
-
 module Performify
   module Validation
     def self.extended(base)
@@ -10,8 +8,8 @@ module Performify
     module ClassMethods
       def schema(outer_schema = nil, &block)
         if block_given?
-          @schema = Dry::Validation.Schema(Dry::Validation::Schema::Params, {}, &block)
-        elsif outer_schema.present? && outer_schema.is_a?(Dry::Validation::Schema)
+          @schema = Dry::Schema.Params({}, &block)
+        elsif outer_schema.present? && outer_schema.is_a?(Dry::Schema::Params)
           @schema = outer_schema
         else
           @schema
@@ -27,7 +25,8 @@ module Performify
       def validate
         return args if schema.nil?
 
-        result = schema.with(with_options).call(args)
+        result = schema.call(args)
+
         if result.success?
           @inputs = result.output
         else
@@ -50,10 +49,6 @@ module Performify
 
       def errors?
         errors.any?
-      end
-
-      private def with_options
-        { current_user: current_user }
       end
     end
   end

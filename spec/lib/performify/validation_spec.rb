@@ -126,7 +126,7 @@ RSpec.describe Performify::Base do
 
     context 'with outer schema' do
       let(:klass) do
-        outer_schema = Dry::Validation.Schema do
+        outer_schema = Dry::Schema.Params do
           required(:foo).filled(:str?)
         end
 
@@ -164,94 +164,6 @@ RSpec.describe Performify::Base do
         it 'no filtered inputs' do
           subject.execute!
           expect(subject.inputs).to be_nil
-        end
-      end
-    end
-
-    context '#with_options' do
-      let(:user) { double(:user, foo: 'bar') }
-
-      let(:klass) do
-        Class.new(described_class) do
-          schema do
-            configure do
-              option :current_user
-
-              def self.messages
-                super.merge(en: { errors: { valid?: 'foo invalid' } })
-              end
-
-              def valid?(value)
-                current_user.foo == value
-              end
-            end
-
-            required(:foo).filled(:str?, :valid?)
-          end
-
-          def execute!
-            super { true }
-          end
-        end
-      end
-
-      context 'foo valid' do
-        it 'no errors' do
-          expect(subject.errors).to eq({})
-        end
-      end
-
-      context 'foo invalid' do
-        let(:user) { double(:user, foo: 'bar_foo') }
-
-        it 'should return error' do
-          expect(subject.errors).to eq({ foo: ['foo invalid'] })
-        end
-      end
-
-      context 'override' do
-        let(:klass) do
-          Class.new(described_class) do
-            schema do
-              configure do
-                option :user
-
-                def self.messages
-                  super.merge(en: { errors: { valid?: 'foo invalid' } })
-                end
-
-                def valid?(value)
-                  user.foo == value
-                end
-              end
-
-              required(:foo).filled(:str?, :valid?)
-            end
-
-            def execute!
-              super { true }
-            end
-
-            private
-
-            def with_options
-              { user: current_user}
-            end
-          end
-        end
-
-        context 'foo valid' do
-          it 'no errors' do
-            expect(subject.errors).to eq({})
-          end
-        end
-
-        context 'foo invalid' do
-          let(:user) { double(:user, foo: 'bar_foo') }
-
-          it 'should return error' do
-            expect(subject.errors).to eq({ foo: ['foo invalid'] })
-          end
         end
       end
     end

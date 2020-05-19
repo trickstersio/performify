@@ -8,7 +8,7 @@ module Performify
     module ClassMethods
       def schema(outer_schema = nil, &block)
         if block_given?
-          @schema = Dry::Schema.Params({}, &block)
+          @schema = Dry::Schema.Params(**{}, &block)
         elsif outer_schema.present? && outer_schema.is_a?(Dry::Schema::Params)
           @schema = outer_schema
         else

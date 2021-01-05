@@ -1,0 +1,25 @@
+name: Test
+on:
+  push:
+    branches:
+      - $default-branch
+
+  pull_request:
+    branches:
+      - $default-branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 3.0.x
+          bundler-cache: true
+
+      - name: Test
+        run: |
+          bundle exec rspec --format progress
+

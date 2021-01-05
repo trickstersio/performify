@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dry-schema", "~> 1.5"
 
   spec.add_development_dependency "sqlite3", "~> 1.4"
-  spec.add_development_dependency "bundler", "~> 2.2.4"
+  spec.add_development_dependency "bundler", ">= 2.2"
   spec.add_development_dependency "rake", "~> 12.3.3"
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "rubocop", "~> 0.48"
